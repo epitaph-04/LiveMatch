@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="hlsPlayer">
+        <attr name="hlsSource" format="string" />
+    </declare-styleable>
+</resources>

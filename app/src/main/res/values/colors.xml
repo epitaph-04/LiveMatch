@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3f51b5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="transparent">#00000000</color>
+    <color name="buffered">#FF40FF</color>
+    <color name="played">#2F4081</color>
+    <color name="scrubber">#AFFFFF</color>
+    <color name="unplayed">#FBAFBF</color>
+    <color name="cardBackgroud">#1E75A8</color>
+    <color name="card">#BCE97C</color>
+    <color name="dialogColor">#F9FBFB</color>
+</resources>

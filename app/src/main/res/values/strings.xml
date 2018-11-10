@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Live match</string>
+    <string name="title_activity_player">HlsPlayer</string>
+    <string name="title_activity_main">Live matches</string>
+    <string name="options">options</string>
+    <string name="itemcount">0</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="todo">TODO</string>
+</resources>
