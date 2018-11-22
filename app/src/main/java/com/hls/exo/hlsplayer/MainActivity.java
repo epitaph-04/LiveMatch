@@ -1,5 +1,7 @@
 package com.hls.exo.hlsplayer;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.design.widget.AppBarLayout;
@@ -10,30 +12,50 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.hls.exo.hlsplayer.LinkProvider.MatchInfo;
+import com.hls.exo.hlsplayer.LinkProvider.MatchLinkInfo;
+import com.hls.exo.hlsplayer.Views.MatchLinkView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity implements ILinkInteractionListener{
 
-    private LinkView linkView;
-    private String currentUrl;
-    private AppBarLayout appBarLayout;
-    private FloatingActionButton fab;
-    private Toolbar toolbar;
+    private MatchLinkView matchLinkView;
+    private List<MatchInfo> linkList;
+
+    private ProgressDialog busyDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        appBarLayout = findViewById(R.id.app_bar);
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        initializeFragment();
-        fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                linkView.refresh();
-            }
-        });
+
+        busyDialog = new ProgressDialog(this.getApplicationContext());
+        busyDialog.setMessage("Please wait.");
+        busyDialog.setCancelable(false);
+
+        matchLinkView = findViewById(R.id.matchlinkviewid);
+        matchLinkView.addLinkInteractionListener(this);
+        createListData();
     }
 
     @Override
@@ -41,36 +63,69 @@ public class MainActivity extends AppCompatActivity implements ILinkInteractionL
         super.onSaveInstanceState(outState, outPersistentState);
     }
 
-    private void initializeFragment(){
-        HlsPlayer hlsPlayer = HlsPlayer.newInstance(currentUrl);
-        ManageFragment(hlsPlayer, R.id.playerfragment);
-        linkView = LinkView.newInstance(this);
-        ManageFragment(linkView, R.id.listfragment);
-    }
-
     public void onClick(String url) {
-        StartPlayer(url);
+        Intent intent = new Intent(this, ViewListActivity.class);
+        intent.putExtra("Url", url);
+        intent.putExtra("data", new Gson().toJson(linkList));
+        startActivity(intent);
     }
 
-    private void StartPlayer(String url) {
-        currentUrl = url;
-        HlsPlayer hlsPlayer = HlsPlayer.newInstance(url);
-        ManageFragment(hlsPlayer, R.id.playerfragment);
-    }
+    private void createListData() {
 
-    private void ManageFragment(android.support.v4.app.Fragment fragment, int viewId) {
-        String backStateName =  fragment.getClass().getName();
-        String fragmentTag = backStateName;
+        RequestQueue queue = Volley.newRequestQueue(this.getApplicationContext());
+        String url ="http://87.210.113.95:60000/api/sport";
 
-        FragmentManager manager = getSupportFragmentManager();
-        boolean fragmentPopped = manager.popBackStackImmediate (backStateName, 0);
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try
+                        {
+                            linkList = new ArrayList<MatchInfo>();
+                            Map<String, MatchInfo> infoHolder = new HashMap<String, MatchInfo>();
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject c = response.getJSONObject(i);
 
-        if (!fragmentPopped && manager.findFragmentByTag(fragmentTag) == null){
-            FragmentTransaction ft = manager.beginTransaction();
-            ft.replace(viewId, fragment, fragmentTag)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(backStateName)
-                    .commit();
-        }
+                                JSONObject linkinfo = c.getJSONObject("linkInfo");
+                                String title = linkinfo.getString("title");
+                                String language = linkinfo.getString("language");
+                                String time = linkinfo.getString("time");
+                                String quality = linkinfo.getString("quality");
+
+                                JSONArray links = c.getJSONArray("links");
+                                ArrayList<String> videolink = new ArrayList<>();
+                                for (int j = 0; j < links.length(); j++) {
+                                    videolink.add(links.getString(j));
+                                }
+
+                                List<MatchLinkInfo> link = new ArrayList<MatchLinkInfo>();
+                                link.add(new MatchLinkInfo(language, quality, videolink));
+
+                                if(infoHolder.containsKey(title)) {
+                                    List<MatchLinkInfo> ll = infoHolder.get(title).getLinkinfo();
+                                    link.addAll(ll);
+                                }
+                                infoHolder.put(title, new MatchInfo(title, time, link));
+                            }
+                            linkList.addAll(infoHolder.values());
+                            matchLinkView.setLinkList(linkList);
+                        }
+                        catch (JSONException ex){}
+                        finally {
+                            busyDialog.dismiss();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        busyDialog.dismiss();
+                    }
+                });
+
+        int socketTimeout = 60000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, 1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+        queue.add(request);
     }
 }

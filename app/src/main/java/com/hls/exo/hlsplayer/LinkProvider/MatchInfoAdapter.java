@@ -18,7 +18,7 @@ public class MatchInfoAdapter extends RecyclerView.Adapter<MatchInfoHolder>{
     private List<MatchInfo> matchInfos;
     private IRecyclerClickListener mListener;
 
-    public MatchInfoAdapter(Context context, ArrayList<MatchInfo> matchInfos, IRecyclerClickListener listener) {
+    public MatchInfoAdapter(Context context, List<MatchInfo> matchInfos, IRecyclerClickListener listener) {
         this.context = context;
         this.matchInfos = matchInfos;
         this.mListener = listener;
@@ -39,6 +39,7 @@ public class MatchInfoAdapter extends RecyclerView.Adapter<MatchInfoHolder>{
 
     @Override
     public int getItemCount() {
+        if(matchInfos == null) return 0;
         return matchInfos.size();
     }
 }
