@@ -4,12 +4,8 @@
     <string name="title_activity_main">Live matches</string>
     <string name="options">options</string>
     <string name="itemcount">0</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="todo">TODO</string>
-
+    <string name="list_thumbnail_view_description">Video preview thumbnail</string>
+    <string name="detail_thumbnail_view_description">Video preview thumbnail</string>
     <string name="title_activity_match">MatchActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="other_match">Other on going Matches</string>
 </resources>

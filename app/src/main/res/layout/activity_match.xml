@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0099cc"
-    tools:context=".MatchActivity">
+    tools:context=".Activities.MatchActivity">
 
-    <com.hls.exo.hlsplayer.Views.HlsView
+    <com.hls.exo.hlsplayer.Views.HlsView.HlsView
         android:id="@+id/fullscreenhlsviewid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
