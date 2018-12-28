@@ -36,7 +36,8 @@ import com.hls.exo.hlsplayer.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HlsView extends FrameLayout {
+public class
+HlsView extends FrameLayout {
 
     private boolean playWhenReady = true;
     private int currentWindow = 0;
@@ -82,8 +83,8 @@ public class HlsView extends FrameLayout {
         });
 
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.hlsPlayer);
-        SetHlsSource(attributes.getString(R.styleable.hlsPlayer_hlsSource));
-        SetFullScreen(attributes.getBoolean(R.styleable.hlsPlayer_fullscreen, false));
+        startPlayer(attributes.getString(R.styleable.hlsPlayer_hlsSource));
+        setFullScreen(attributes.getBoolean(R.styleable.hlsPlayer_fullscreen, false));
     }
 
     @Override
@@ -101,12 +102,19 @@ public class HlsView extends FrameLayout {
 
     public void addFullScreenClickListener(IHlsFullScreenClickListener toAdd){ listeners.add(toAdd); }
 
-    public void SetHlsSource(String source) {
+    public void startPlayer(String source) {
         hlsSource = source;
         preparePlayer();
     }
 
-    public void SetFullScreen(Boolean isFullscreen) {
+    public void stopPlayer() {
+        if (player != null) {
+            player.stop();
+            player.seekTo(0);
+        }
+    }
+
+    public void setFullScreen(Boolean isFullscreen) {
         fullScreen = isFullscreen;
         setImageResource(fullScreen);
     }

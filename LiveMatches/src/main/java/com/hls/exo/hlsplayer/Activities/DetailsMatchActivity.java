@@ -1,7 +1,6 @@
 package com.hls.exo.hlsplayer.Activities;
 
 import android.content.Intent;
-import android.opengl.Visibility;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -104,7 +103,7 @@ public class DetailsMatchActivity extends AppCompatActivity
                     detail_thumbnail_play_button.setVisibility(View.INVISIBLE);
                     detail_thumbnail_image_view.setVisibility(View.GONE);
                     hlsView.setVisibility(View.VISIBLE);
-                    hlsView.SetHlsSource(url);
+                    hlsView.startPlayer(url);
                 }
             }
         });
@@ -134,7 +133,7 @@ public class DetailsMatchActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        hlsView.SetFullScreen(false);
+        hlsView.setFullScreen(false);
     }
 
     @Override
@@ -147,13 +146,14 @@ public class DetailsMatchActivity extends AppCompatActivity
         detail_thumbnail_play_button.setVisibility(View.VISIBLE);
         detail_thumbnail_image_view.setVisibility(View.VISIBLE);
         hlsView.setVisibility(View.GONE);
+        hlsView.stopPlayer();
         Picasso.get().load(imageUrl+currentMatchInfo.getTitle()+".jpg").placeholder(R.drawable.dummy_thumbnail).into(detail_thumbnail_image_view);
     }
 
     @Override
     public void onClick(MatchLink match) {
         url = match.getLink();
-        hlsView.SetHlsSource(url);
+        hlsView.startPlayer(url);
         updateDetailsInfo(currentMatchInfo.getTitle(), match.getLanguage(), match.getQuality());
     }
 

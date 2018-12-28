@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Live match</string>
+    <string name="title_activity_player">HlsPlayer</string>
+    <string name="title_activity_main">Live matches</string>
+    <string name="options">options</string>
+    <string name="itemcount">0</string>
+    <string name="list_thumbnail_view_description">Video preview thumbnail</string>
+    <string name="detail_thumbnail_view_description">Video preview thumbnail</string>
+    <string name="title_activity_match">MatchActivity</string>
+    <string name="other_match">Other on going Matches</string>
+</resources>

@@ -31,7 +31,7 @@ public class MatchActivity extends AppCompatActivity {
             }
         });
 
-        mHlsView.SetHlsSource(getIntent().getStringExtra("Url"));
+        mHlsView.startPlayer(getIntent().getStringExtra("Url"));
         toggle();
     }
 
